@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chestionare Tehno Fab</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif; /* Similar to Google Fonts */
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #3c4043; /* Google's dark grey */
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(60, 64, 67, .3); /* Softer shadow */
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1a73e8; /* Google blue */
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+
+        #quizSelection, #quizDisplay {
+            margin-bottom: 20px;
+        }
+
+        #quizSelection h2 {
+            color: #4285f4;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        #quizSelection button {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #quizSelection button:hover {
+            background-color: #357ae8;
+            transform: translateY(-2px);
+        }
+
+        .question-section {
+            margin-bottom: 20px;
+            text-align: left;
+            display: none; /* Hidden initially */
+        }
+
+        .question-number {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4285f4;
+            margin-bottom: 10px;
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .options-container label {
+            display: block;
+            margin-bottom: 15px;
+            padding: 12px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            display: flex; /* Align content nicely */
+            align-items: center;
+        }
+
+        .options-container label:hover {
+            background-color: #e8f0fe;
+            border-color: #4285f4;
+        }
+
+        .options-container input[type="radio"],
+        .options-container input[type="checkbox"] {
+            margin-right: 15px;
+            transform: scale(1.3); /* Slightly larger checkboxes/radios */
+            vertical-align: middle;
+            flex-shrink: 0; /* Prevent input from shrinking */
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .navigation-buttons button {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .navigation-buttons button:hover {
+            background-color: #357ae8;
+        }
+
+        .navigation-buttons button:disabled {
+            background-color: #aab8c2;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .results-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dadce0;
+            text-align: left;
+            display: none; /* Hidden by default */
+        }
+
+        .results-section h3 {
+            color: #1a73e8;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-item.correct {
+            background-color: #e6ffe6; /* Light green for correct */
+            border: 1px solid #0f9d58; /* Green border */
+        }
+
+        .result-item.incorrect {
+            background-color: #ffe6e6; /* Light red for incorrect */
+            border: 1px solid #db4437; /* Red border */
+        }
+
+        .result-item p {
+            margin: 5px 0;
+        }
+
+        .result-item .user-answer {
+            font-weight: bold;
+            color: #3c4043;
+        }
+
+        .result-item .correct-answer {
+            color: #0f9d58;
+            font-weight: bold;
+        }
+
+        #backToSelection {
+            background-color: #f4b400; /* Google yellow */
+            margin-top: 20px;
+            display: none;
+        }
+        #backToSelection:hover {
+            background-color: #dbaa00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chestionare Tehno Fab</h1>
+
+        <div id="quizSelection">
+            <h2>Selectează un Chestionar</h2>
+            <div id="quizButtons">
+                </div>
+        </div>
+
+        <div id="quizDisplay" style="display: none;">
+            <div class="question-section" id="questionSection">
+                <div class="question-number" id="questionNumber"></div>
+                <p class="question-text" id="questionText"></p>
+                <div class="options-container" id="optionsContainer">
+                    </div>
+            </div>
+
+            <div class="navigation-buttons">
+                <button id="prevBtn" disabled>Înapoi</button>
+                <button id="nextBtn">Următoarea</button>
+                <button id="submitBtn" style="display: none;">Verifică Răspunsurile</button>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <h3>Rezultate Chestionar</h3>
+                <div id="resultsContent">
+                    </div>
+                <button id="backToSelection">Alege alt Chestionar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toate chestionarele extrase din PDF
+        const allQuizzes = {
+            "Chestionar 1": [
+                {
+                    question: "1. Care este principalul scop al procedeului de reconditionare la trepte de reparatii?",
+                    options: ["a) îmbunătățirea aspectului pieselor", "b) Restabilirea parametrilor de precizie iniţiali", "c) Reducerea dimensiunilor pieselor"],
+                    correctAnswers: ["b) Restabilirea parametrilor de precizie iniţiali"],
+                    type: "radio"
+                },
+                {
+                    question: "2. Cum se numeşte dimensiunea la care se prelucrează suprafata uzată în cadrul procedeului de reconditionare la trepte de reparatii?",
+                    options: ["a) Treapta de uzură", "b) Treapta de reparatie", "c) Treapta de prelucrare"],
+                    correctAnswers: ["b) Treapta de reparatie"],
+                    type: "radio"
+                },
+                {
+                    question: "3. Ce se întâmplă cu piesa conjugată celei prelucrate la treapta de reparatie?",
+                    options: ["a) Se aruncă", "b) Se recondiţionează la aceeaşi dimensiune", "c) Se înlocuiește cu o piesă nouă"],
+                    correctAnswers: ["c) Se înlocuiește cu o piesă nouă"],
+                    type: "radio"
+                },
+                {
+                    question: "4. Cum se determină intervalul de reparatie în cadrul procedeului de reconditionare la trepte de reparatii?",
+                    options: ["a) Din conditii climatice", "b) Din conditii functionale si tehnologice", "c) Din conditii economice"],
+                    correctAnswers: ["b) Din conditii functionale si tehnologice"],
+                    type: "radio"
+                },
+                {
+                    question: "5. Care este una dintre condițiile pentru stabilirea numărului de cote de reparatii în cadrul procedeului de reconditionare la trepte de reparatii?",
+                    options: ["a) Conditia de duritate", "b) Conditia de rezistenta", "c) Conditia de flexibilitate"],
+                    correctAnswers: ["b) Conditia de rezistenta"],
+                    type: "radio"
+                },
+                {
+                    question: "6. Ce se realizează în cazul reconditionarii danturilor în cadrul procedeului de reconditionare la trepte de reparatii?",
+                    options: ["a) Se înlocuiesc", "b) Li se aplică o deplasare suplimentară", "c) Se refac integral"],
+                    correctAnswers: ["b) Li se aplică o deplasare suplimentară"],
+                    type: "radio"
+                },
+                {
+                    question: "7. Care este principalul dezavantaj al procedeului de reconditionare la trepte de reparatii?",
+                    options: ["a) Creșterea costurilor de fabricație", "b) Necesitatea înlocuirii pieselor conjugate", "c) Dificultatea de a obține piese de schimb"],
+                    correctAnswers: ["b) Necesitatea înlocuirii pieselor conjugate"],
+                    type: "radio"
+                },
+                {
+                    question: "8. Ce se întâmplă cu toleranțele la dimensiuni în cazul reconditionarii la trepte de reparatii?",
+                    options: ["a) Se mențin la fel", "b) Se măresc", "c) Se micșorează"],
+                    correctAnswers: ["a) Se mențin la fel"],
+                    type: "radio"
+                },
+                {
+                    question: "9. În ce situații este recomandată reconditionarea la trepte de reparatii?",
+                    options: ["a) Doar pentru piese noi", "b) Pentru piese cu uzură redusă", "c) Pentru piese cu uzură mare, dar care pot fi refăcute la o dimensiune superioară"],
+                    correctAnswers: ["c) Pentru piese cu uzură mare, dar care pot fi refăcute la o dimensiune superioară"],
+                    type: "radio"
+                },
+                {
+                    question: "10. Ce rol are un atelier de reparații în cadrul procedeului de reconditionare la trepte de reparatii?",
+                    options: ["a) Fabrică piese noi", "b) Realizează operațiile de prelucrare și montaj", "c) Asigură transportul pieselor"],
+                    correctAnswers: ["b) Realizează operațiile de prelucrare și montaj"],
+                    type: "radio"
+                },
+                {
+                    question: "11. Cum se asigură precizia dimensională la reconditionarea la trepte de reparatii?",
+                    options: ["a) Prin măsurători frecvente în timpul prelucrării", "b) Prin folosirea de scule de precizie", "c) Ambele variante"],
+                    correctAnswers: ["c) Ambele variante"],
+                    type: "radio"
+                },
+                {
+                    question: "12. Ce tip de uzură este vizată de reconditionarea la trepte de reparatii?",
+                    options: ["a) Uzura prin frecare", "b) Uzura prin coroziune", "c) Uzura prin oboseală"],
+                    correctAnswers: ["a) Uzura prin frecare"],
+                    type: "radio"
+                },
+                {
+                    question: "13. Este reconditionarea la trepte de reparatii un proces economic?",
+                    options: ["a) Da, reduce costurile comparativ cu înlocuirea", "b) Nu, este mai scump decât înlocuirea", "c) Depinde de tipul piesei"],
+                    correctAnswers: ["a) Da, reduce costurile comparativ cu înlocuirea"],
+                    type: "radio"
+                },
+                {
+                    question: "14. Ce se întâmplă cu proprietățile materialului în timpul reconditionarii la trepte de reparatii?",
+                    options: ["a) Se îmbunătățesc", "b) Rămân neschimbate", "c) Pot fi afectate negativ dacă nu se respectă procesul tehnologic"],
+                    correctAnswers: ["c) Pot fi afectate negativ dacă nu se respectă procesul tehnologic"],
+                    type: "radio"
+                },
+                {
+                    question: "15. Ce documente sunt necesare pentru a realiza reconditionarea la trepte de reparatii?",
+                    options: ["a) Fișa tehnologică și desenul de execuție", "b) Doar fișa tehnologică", "c) Doar desenul de execuție"],
+                    correctAnswers: ["a) Fișa tehnologică și desenul de execuție"],
+                    type: "radio"
+                },
+                {
+                    question: "16. Ce tip de mașini-unelte sunt folosite în mod obișnuit pentru reconditionarea la trepte de reparatii?",
+                    options: ["a) Strunguri și mașini de frezat", "b) Mașini de sudură", "c) Mașini de tăiat cu laser"],
+                    correctAnswers: ["a) Strunguri și mașini de frezat"],
+                    type: "radio"
+                },
+                {
+                    question: "17. Care este rolul controlului de calitate în procesul de reconditionare la trepte de reparatii?",
+                    options: ["a) Verifică doar aspectul estetic", "b) Asigură respectarea parametrilor de precizie și a condițiilor tehnologice", "c) Verifică doar costurile"],
+                    correctAnswers: ["b) Asigură respectarea parametrilor de precizie și a condițiilor tehnologice"],
+                    type: "radio"
+                },
+                {
+                    question: "18. Ce înseamnă conceptul de 'durată de viață utilă' în contextul reconditionarii?",
+                    options: ["a) Durata totală de funcționare a piesei", "b) Perioada de timp în care piesa își menține parametrii de funcționare după reconditionare", "c) Timpul necesar pentru a reconditiona piesa"],
+                    correctAnswers: ["b) Perioada de timp în care piesa își menține parametrii de funcționare după reconditionare"],
+                    type: "radio"
+                }
+            ],
+            "Chestionar 2": [
+                {
+                    question: "19. Care este avantajul principal al depunerilor galvanice in vederea reconditionarii?",
+                    options: ["a) Nu necesită pregătirea suprafeței", "b) Pot crea straturi cu proprietăți superioare materialului de bază", "c) Sunt procese rapide și ieftine"],
+                    correctAnswers: ["b) Pot crea straturi cu proprietăți superioare materialului de bază"],
+                    type: "radio"
+                },
+                {
+                    question: "20. Ce rol are baia de degresare în procesul de pregătire a suprafeței pentru depuneri galvanice?",
+                    options: ["a) Îndepărtează oxizii", "b) Îndepărtează grăsimile și uleiurile", "c) Asigură o aderență mai bună a stratului"],
+                    correctAnswers: ["b) Îndepărtează grăsimile și uleiurile"],
+                    type: "radio"
+                },
+                {
+                    question: "21. Ce este decapare chimică în contextul depunerilor galvanice?",
+                    options: ["a) Procesul de acoperire a suprafeței cu un strat protector", "b) Îndepărtarea oxizilor și a impurităților de pe suprafața metalului", "c) Curățarea mecanică a pieselor"],
+                    correctAnswers: ["b) Îndepărtarea oxizilor și a impurităților de pe suprafața metalului"],
+                    type: "radio"
+                },
+                {
+                    question: "22. Care este rolul anodului în celula de galvanizare?",
+                    options: ["a) De a atrage ionii metalici din soluție", "b) De a furniza ioni metalici soluției și de a închide circuitul electric", "c) De a regla temperatura băii"],
+                    correctAnswers: ["b) De a furniza ioni metalici soluției și de a închide circuitul electric"],
+                    type: "radio"
+                },
+                {
+                    question: "23. Ce reprezintă 'densitatea de curent' în procesul de depunere galvanică?",
+                    options: ["a) Cantitatea totală de curent care trece prin baie", "b) Curentul electric pe unitatea de suprafață a piesei", "c) Tensiunea aplicată la electrozi"],
+                    correctAnswers: ["b) Curentul electric pe unitatea de suprafață a piesei"],
+                    type: "radio"
+                },
+                {
+                    question: "24. Care este o metodă de control a grosimii stratului depus galvanic?",
+                    options: ["a) Cântărirea piesei înainte și după depunere", "b) Măsurarea vizuală", "c) Măsurarea temperaturii băii"],
+                    correctAnswers: ["a) Cântărirea piesei înainte și după depunere"],
+                    type: "radio"
+                },
+                {
+                    question: "25. Ce tip de strat protector formează nichelarea?",
+                    options: ["a) Strat dur și rezistent la coroziune", "b) Strat moale și decorativ", "c) Strat izolator electric"],
+                    correctAnswers: ["a) Strat dur și rezistent la coroziune"],
+                    type: "radio"
+                },
+                {
+                    question: "26. Ce se utilizează ca electrolit în procesul de cromare decorativă?",
+                    options: ["a) Soluție de sulfat de cupru", "b) Soluție de acid cromic și acid sulfuric", "c) Soluție de cianură de aur"],
+                    correctAnswers: ["b) Soluție de acid cromic și acid sulfuric"],
+                    type: "radio"
+                },
+                {
+                    question: "27. Care este unul dintre dezavantajele depunerilor galvanice?",
+                    options: ["a) Costuri reduse", "b) Necesită echipamente complexe și personal specializat", "c) Procese rapide"],
+                    correctAnswers: ["b) Necesită echipamente complexe și personal specializat"],
+                    type: "radio"
+                },
+                {
+                    question: "28. Ce proprietăți conferă cromarea pieselor?",
+                    options: ["a) Flexibilitate și conductivitate electrică", "b) Duritate ridicată și rezistență la uzură și coroziune", "c) Aspect mat și aderență slabă"],
+                    correctAnswers: ["b) Duritate ridicată și rezistență la uzură și coroziune"],
+                    type: "radio"
+                },
+                {
+                    question: "29. Ce se întâmplă cu piesele în timpul procesului de zincare?",
+                    options: ["a) Sunt suspendate la catod.", "b) Sunt acoperite cu un strat de zinc.", "c) Sunt rotite într-o baie de electrolit."],
+                    correctAnswers: ["b) Sunt acoperite cu un strat de zinc."],
+                    type: "radio"
+                },
+                {
+                    question: "30. Ce este eloxarea?",
+                    options: ["a) Depunerea unui strat de cupru pe o suprafață metalică", "b) Formarea unor straturi de oxid de aluminiu pe aliaje de aluminiu", "c) Depunerea de crom pe o suprafață metalică"],
+                    correctAnswers: ["b) Formarea unor straturi de oxid de aluminiu pe aliaje de aluminiu"],
+                    type: "radio"
+                },
+                {
+                    question: "31. Ce rol are controlul de calitate în depunerile galvanice?",
+                    options: ["a) Asigură aspectul estetic", "b) Verifică grosimea și aderența stratului depus", "c) Controlează temperatura"],
+                    correctAnswers: ["b) Verifică grosimea și aderența stratului depus"],
+                    type: "radio"
+                },
+                {
+                    question: "32. Ce este pasivizarea în procesul de zincare?",
+                    options: ["a) O operație de degresare", "b) Un tratament chimic care îmbunătățește rezistența la coroziune a stratului de zinc", "c) O metodă de uscare"],
+                    correctAnswers: ["b) Un tratament chimic care îmbunătățește rezistența la coroziune a stratului de zinc"],
+                    type: "radio"
+                },
+                {
+                    question: "33. Care este diferența principală între cromarea dură și cromarea decorativă?",
+                    options: ["a) Cromarea dură are un aspect mat, cea decorativă este lucioasă", "b) Cromarea dură implică un strat mult mai gros și rezistent la uzură", "c) Cromarea decorativă este mai scumpă"],
+                    correctAnswers: ["b) Cromarea dură implică un strat mult mai gros și rezistent la uzură"],
+                    type: "radio"
+                },
+                {
+                    question: "34. Ce este o soluție electrolitică?",
+                    options: ["a) O soluție care nu conduce curentul electric", "b) O soluție care conține ioni și conduce curentul electric", "c) O soluție acidă"],
+                    correctAnswers: ["b) O soluție care conține ioni și conduce curentul electric"],
+                    type: "radio"
+                },
+                {
+                    question: "35. Ce se întâmplă cu suprafața piesei după degresare și decapare?",
+                    options: ["a) Devine mai rugoasă", "b) Devine curată și activă pentru depunere", "c) Se oxidează rapid"],
+                    correctAnswers: ["b) Devine curată și activă pentru depunere"],
+                    type: "radio"
+                },
+                {
+                    question: "36. Care este un exemplu de material care se poate recondiționa prin depuneri galvanice?",
+                    options: ["a) Lemnul", "b) Aluminiul", "c) Oțelul"],
+                    correctAnswers: ["c) Oțelul"],
+                    type: "radio"
+                }
+            ],
+            "Chestionar 3": [
+                {
+                    question: "37. Care este principalul dezavantaj al depunerilor galvanice?",
+                    options: ["a) Durități ridicate", "b) Piesa este legată la polul negativ al sursei de energie.", "c) Complexitatea procesului de pregătire și realizare a depunerii"],
+                    correctAnswers: ["c) Complexitatea procesului de pregătire și realizare a depunerii"],
+                    type: "radio"
+                },
+                {
+                    question: "38. Ce tip de curent se utilizează în procesul de electrodepunere?",
+                    options: ["a) Curent alternativ", "b) Curent continuu", "c) Curent pulsat"],
+                    correctAnswers: ["b) Curent continuu"],
+                    type: "radio"
+                },
+                {
+                    question: "39. Care este formula legii lui Faraday pentru electrodepunere?",
+                    options: ["a) m = e·I·t·η", "b) U = R·I", "c) P = U·I"],
+                    correctAnswers: ["a) m = e·I·t·η"],
+                    type: "radio"
+                },
+                {
+                    question: "40. Care este randamentul curentului la depunerea cromului?",
+                    options: ["a) 10-20%", "b) 30-40%", "c) 65-70%"],
+                    correctAnswers: ["c) 65-70%"],
+                    type: "radio"
+                },
+                {
+                    question: "41. Care este etapa 4 în pregătirea suprafeței pentru depuneri galvanice (conform ordinii standard)?",
+                    options: ["a) Spălarea cu apă", "b) Degresarea chimică", "c) Decaparea", "d) Montarea pieselor în dispozitivul de susținere"],
+                    correctAnswers: ["d) Montarea pieselor în dispozitivul de susținere"],
+                    type: "radio"
+                },
+                {
+                    question: "42. Ce tip de proprietăți conferă zincarea pieselor?",
+                    options: ["a) Decorativ-protectoare", "b) Decorative", "c) Numai protectoare"],
+                    correctAnswers: ["a) Decorativ-protectoare"],
+                    type: "radio"
+                },
+                {
+                    question: "43. Ce compuși chimici sunt esențiali în electrolitul de cromare?",
+                    options: ["a) Clorură de sodiu și apă", "b) CrO3 și ioni sulfat (SO4^2-)", "c) Acid clorhidric și săruri de fier"],
+                    correctAnswers: ["b) CrO3 și ioni sulfat (SO4^2-)"],
+                    type: "radio"
+                },
+                {
+                    question: "44. Cum se realizează cromarea pieselor mici (șuruburi, piulițe)?",
+                    options: ["a) Sunt suspendate individual", "b) Sunt introduse în cuve rotative.", "c) Sunt acoperite prin pulverizare"],
+                    correctAnswers: ["b) Sunt introduse în cuve rotative."],
+                    type: "radio"
+                },
+                {
+                    question: "45. Cum arată un strat de crom depus decorativ?",
+                    options: ["a) Are un aspect mat.", "b) Are un aspect strălucitor.", "c) Are un aspect neuniform."],
+                    correctAnswers: ["b) Are un aspect strălucitor."],
+                    type: "radio"
+                },
+                {
+                    question: "46. Care este un avantaj al metodei de depunere prin placare?",
+                    options: ["a) Cost redus", "b) Se poate aplica la orice formă de piesă", "c) Aderență perfectă a stratului"],
+                    correctAnswers: ["a) Cost redus"],
+                    type: "radio"
+                },
+                {
+                    question: "47. Se poate îmbunătăți rezistența la coroziune a zincului prin pasivizare?",
+                    options: ["a) Da", "b) Nu", "c) Doar pentru anumite tipuri de zinc"],
+                    correctAnswers: ["a) Da"],
+                    type: "radio"
+                },
+                {
+                    question: "48. Ce se întâmplă cu viteza de coroziune a metalului de bază dacă stratul de zinc se deteriorează?",
+                    options: ["a) Accelerează electrocoroziunea", "b) Nu afectează electrocoroziunea", "c) Reduce electrocoroziunea"],
+                    correctAnswers: ["a) Accelerează electrocoroziunea"],
+                    type: "radio"
+                },
+                {
+                    question: "49. Ce metodă utilizează eloxarea pentru a forma un strat protector?",
+                    options: ["a) Oxidarea anodică", "b) Reducerea catodică", "c) Depunerea chimică"],
+                    correctAnswers: ["a) Oxidarea anodică"],
+                    type: "radio"
+                },
+                {
+                    question: "50. Ce se formează pe suprafața pieselor din aluminiu în timpul eloxării?",
+                    options: ["a) Un strat de cupru", "b) Formarea unor straturi de oxid de aluminiu pe aliaje de aluminiu", "c) Un strat de crom"],
+                    correctAnswers: ["b) Formarea unor straturi de oxid de aluminiu pe aliaje de aluminiu"],
+                    type: "radio"
+                },
+                {
+                    question: "51. Care este scopul principal al eloxării?",
+                    options: ["a) Îmbunătățirea conductivității electrice", "b) Creșterea rezistenței la coroziune și uzură", "c) Reducerea durității suprafeței"],
+                    correctAnswers: ["b) Creșterea rezistenței la coroziune și uzură"],
+                    type: "radio"
+                },
+                {
+                    question: "52. Ce condiții termice trebuie să se respecte la depunerea chimică de nichel?",
+                    options: ["a) Temperatura camerei", "b) Temperaturi ridicate (peste 100°C)", "c) Temperaturi scăzute (sub 0°C)"],
+                    correctAnswers: ["b) Temperaturi ridicate (peste 100°C)"],
+                    type: "radio"
+                },
+                {
+                    question: "53. Ce agent de reducere se utilizează în soluția de nichelare chimică?",
+                    options: ["a) Acid sulfuric", "b) Hipofosfit de sodiu", "c) Clorură de nichel"],
+                    correctAnswers: ["b) Hipofosfit de sodiu"],
+                    type: "radio"
+                },
+                {
+                    question: "54. Care este un avantaj al depunerilor chimice de nichel?",
+                    options: ["a) Grosime foarte mică a stratului", "b) Acoperire uniformă a suprafețelor complexe", "c) Costuri foarte mari"],
+                    correctAnswers: ["b) Acoperire uniformă a suprafețelor complexe"],
+                    type: "radio"
+                }
+            ],
+            "Chestionar 4": [
+                {
+                    question: "55. Ce tip de rezistență are un strat de nichel depus chimic, având în vedere conținutul său de fosfor?",
+                    options: ["a) Rezistență scăzută la coroziune", "b) Rezistență ridicată la coroziune", "c) Rezistență la uzură redusă"],
+                    correctAnswers: ["b) Rezistență ridicată la coroziune"],
+                    type: "radio"
+                },
+                {
+                    question: "56. Ce se poate face pentru a crește duritatea stratului de nichel depus chimic?",
+                    options: ["a) Tratamente termice", "b) Tratamente mecanice", "c) Scăderea temperaturii de depunere"],
+                    correctAnswers: ["a) Tratamente termice"],
+                    type: "radio"
+                },
+                {
+                    question: "57. Care este principalul avantaj al depunerilor chimice față de cele galvanice?",
+                    options: ["a) Viteza mare de depunere", "b) Nu necesită sursă de curent externă", "c) Grosime foarte mare a stratului"],
+                    correctAnswers: ["b) Nu necesită sursă de curent externă"],
+                    type: "radio"
+                },
+                {
+                    question: "58. Care este principalul scop al metalizării prin pulverizare termică?",
+                    options: ["a) Crearea unui strat decorativ", "b) Restabilirea dimensiunilor și a proprietăților pieselor uzate", "c) Îmbunătățirea conductivității electrice"],
+                    correctAnswers: ["b) Restabilirea dimensiunilor și a proprietăților pieselor uzate"],
+                    type: "radio"
+                },
+                {
+                    question: "59. Ce materiale pot fi pulverizate termic?",
+                    options: ["a) Numai metale", "b) Numai ceramice", "c) Metale, aliaje, materiale ceramice, cermeturi, materiale plastice"],
+                    correctAnswers: ["c) Metale, aliaje, materiale ceramice, cermeturi, materiale plastice"],
+                    type: "radio"
+                },
+                {
+                    question: "60. Ce este 'jetul de plasmă' în contextul pulverizării termice?",
+                    options: ["a) Un jet de aer rece", "b) Un jet de gaz ionizat la temperaturi foarte ridicate", "c) Un jet de apă sub presiune"],
+                    correctAnswers: ["b) Un jet de gaz ionizat la temperaturi foarte ridicate"],
+                    type: "radio"
+                },
+                {
+                    question: "61. Care este unul dintre avantajele pulverizării termice?",
+                    options: ["a) Temperaturi scăzute ale piesei", "b) Dificultatea de a obține straturi groase", "c) Aderență redusă"],
+                    correctAnswers: ["a) Temperaturi scăzute ale piesei"],
+                    type: "radio"
+                },
+                {
+                    question: "62. Ce tip de structură au straturile depuse prin pulverizare termică?",
+                    options: ["a) Monolitică", "b) Lamelară", "c) Cristalină perfectă"],
+                    correctAnswers: ["b) Lamelară"],
+                    type: "radio"
+                },
+                {
+                    question: "63. Cum se realizează pregătirea suprafeței în cazul pulverizării termice?",
+                    options: ["a) Prin degresare chimică", "b) Prin sablare", "c) Prin lustruire"],
+                    correctAnswers: ["b) Prin sablare"],
+                    type: "radio"
+                },
+                {
+                    question: "64. Care este un dezavantaj al pulverizării termice?",
+                    options: ["a) Posibilitatea de a recondiționa piese mari", "b) Porozitate ridicată a stratului", "c) Utilizarea unei game variate de materiale"],
+                    correctAnswers: ["b) Porozitate ridicată a stratului"],
+                    type: "radio"
+                },
+                {
+                    question: "65. Ce este 'arcul electric' în procesul de pulverizare cu arc electric?",
+                    options: ["a) Un arc electric creat între electrozi pentru a topi materialul", "b) O sursă de căldură externă", "c) Un arc de lumină"],
+                    correctAnswers: ["a) Un arc electric creat între electrozi pentru a topi materialul"],
+                    type: "radio"
+                },
+                {
+                    question: "66. Ce materiale se utilizează sub formă de sârmă în pulverizarea cu arc electric?",
+                    options: ["a) Numai aliaje ceramice", "b) Numai polimeri", "c) Majoritatea metalelor și aliajelor cu punct de topire relativ scăzut"],
+                    correctAnswers: ["c) Majoritatea metalelor și aliajelor cu punct de topire relativ scăzut"],
+                    type: "radio"
+                },
+                {
+                    question: "67. Care este un avantaj al pulverizării cu arc electric?",
+                    options: ["a) Randament scăzut de depunere", "b) Posibilitatea de automatizare", "c) Strat foarte compact"],
+                    correctAnswers: ["b) Posibilitatea de automatizare"],
+                    type: "radio"
+                },
+                {
+                    question: "68. Ce este 'flacăra oxo-gaz' în pulverizarea cu flacără?",
+                    options: ["a) Un gaz inert", "b) Un amestec de gaze combustibile și oxigen", "c) Un lichid inflamabil"],
+                    correctAnswers: ["b) Un amestec de gaze combustibile și oxigen"],
+                    type: "radio"
+                },
+                {
+                    question: "69. Ce formă au materialele utilizate în pulverizarea cu flacără?",
+                    options: ["a) Numai pulbere", "b) Numai sârmă", "c) Pulbere sau sârmă"],
+                    correctAnswers: ["c) Pulbere sau sârmă"],
+                    type: "radio"
+                },
+                {
+                    question: "70. Care este un dezavantaj al pulverizării cu flacără?",
+                    options: ["a) Simplitatea echipamentului", "b) Temperaturi ridicate ale piesei", "c) Costuri reduse"],
+                    correctAnswers: ["b) Temperaturi ridicate ale piesei"],
+                    type: "radio"
+                },
+                {
+                    question: "71. Ce se utilizează ca sursă de căldură în pulverizarea cu plasmă?",
+                    options: ["a) Un arzător cu gaz", "b) O torță cu plasmă", "c) Un laser"],
+                    correctAnswers: ["b) O torță cu plasmă"],
+                    type: "radio"
+                },
+                {
+                    question: "72. Ce tipuri de materiale pot fi pulverizate cu plasmă?",
+                    options: ["a) Numai metale ușoare", "b) Materiale cu punct de topire foarte ridicat (ceramice, cermeturi)", "c) Numai materiale plastice"],
+                    correctAnswers: ["b) Materiale cu punct de topire foarte ridicat (ceramice, cermeturi)"],
+                    type: "radio"
+                }
+            ],
+            "Chestionar 5": [
+                {
+                    question: "73. Care este un avantaj al pulverizării cu plasmă?",
+                    options: ["a) Temperaturi scăzute în jet", "b) Posibilitatea depunerii materialelor refractare", "c) Consum mare de energie"],
+                    correctAnswers: ["b) Posibilitatea depunerii materialelor refractare"],
+                    type: "radio"
+                },
+                {
+                    question: "74. Ce reprezintă 'aglomerarea' în contextul recondiționării prin metalizare?",
+                    options: ["a) Unirea a două piese metalice", "b) Un proces de depunere a pulberilor metalice pe o suprafață", "c) Un proces de îmbinare a materialelor"],
+                    correctAnswers: ["b) Un proces de depunere a pulberilor metalice pe o suprafață"],
+                    type: "radio"
+                },
+                {
+                    question: "75. Care este avantajul principal al aglomerării la recondiționare?",
+                    options: ["a) Realizează o îmbinare chimică perfectă", "b) Reduce costurile de reparație", "c) Nu necesită pregătire a suprafeței"],
+                    correctAnswers: ["b) Reduce costurile de reparație"],
+                    type: "radio"
+                },
+                {
+                    question: "76. Ce se utilizează pentru fixarea pulberii metalice pe suprafață în aglomerare?",
+                    options: ["a) Adezivi epoxidici", "b) Rășini polimerice", "c) O flacără puternică"],
+                    correctAnswers: ["b) Rășini polimerice"],
+                    type: "radio"
+                },
+                {
+                    question: "77. Ce se întâmplă cu stratul aglomerat după aplicare?",
+                    options: ["a) Este imediat gata de utilizare", "b) Necesită un tratament termic pentru polimerizarea rășinii", "c) Este spălat cu apă"],
+                    correctAnswers: ["b) Necesită un tratament termic pentru polimerizarea rășinii"],
+                    type: "radio"
+                },
+                {
+                    question: "78. Care este un dezavantaj al aglomerării?",
+                    options: ["a) Aderență foarte bună a stratului", "b) Rezistență mecanică inferioară stratului original", "c) Simplitatea procesului"],
+                    correctAnswers: ["b) Rezistență mecanică inferioară stratului original"],
+                    type: "radio"
+                },
+                {
+                    question: "79. Ce tip de recondiționare se realizează prin galvanizare?",
+                    options: ["a) Recondiționare dimensională", "b) Recondiționare a proprietăților suprafeței", "c) Recondiționare structurală"],
+                    correctAnswers: ["b) Recondiționare a proprietăților suprafeței"],
+                    type: "radio"
+                },
+                {
+                    question: "80. Ce se înțelege prin 'recondiționarea prin prelucrări mecanice'?",
+                    options: ["a) Aplicarea unui strat protector", "b) Îndepărtarea materialului prin așchiere pentru restabilirea formei și dimensiunilor", "c) Umplerea zonelor uzate cu material"],
+                    correctAnswers: ["b) Îndepărtarea materialului prin așchiere pentru restabilirea formei și dimensiunilor"],
+                    type: "radio"
+                },
+                {
+                    question: "81. Ce este un 'defect localizat' în contextul recondiționării?",
+                    options: ["a) O uzură uniformă pe întreaga piesă", "b) O zonă specifică, mică, afectată de uzură sau deteriorare", "c) O fisură majoră care necesită înlocuirea piesei"],
+                    correctAnswers: ["b) O zonă specifică, mică, afectată de uzură sau deteriorare"],
+                    type: "radio"
+                },
+                {
+                    question: "82. Ce este 'îndreptarea la rece' în procesul de recondiționare?",
+                    options: ["a) Reducerea dimensiunilor unei piese", "b) Eliminarea deformațiilor prin aplicarea de forțe la temperatură ambiantă", "c) Tratament termic de recoacere"],
+                    correctAnswers: ["b) Eliminarea deformațiilor prin aplicarea de forțe la temperatură ambiantă"],
+                    type: "radio"
+                },
+                {
+                    question: "83. Ce scop are 'îndreptarea la cald'?",
+                    options: ["a) Eliminarea tensiunilor interne fără deformații", "b) Corectarea deformațiilor prin încălzirea piesei", "c) Mărirea durității materialului"],
+                    correctAnswers: ["b) Corectarea deformațiilor prin încălzirea piesei"],
+                    type: "radio"
+                },
+                {
+                    question: "84. Ce reprezintă 'revenirea' în tratamentele termice de recondiționare?",
+                    options: ["a) Încălzirea la o temperatură înaltă urmată de răcire rapidă", "b) Încălzirea oțelului călit la o temperatură sub A1 pentru reducerea fragilității", "c) Răcirea lentă a oțelului pentru a-l face moale"],
+                    correctAnswers: ["b) Încălzirea oțelului călit la o temperatură sub A1 pentru reducerea fragilității"],
+                    type: "radio"
+                },
+                {
+                    question: "85. Ce este 'recocerea' în tratamentele termice de recondiționare?",
+                    options: ["a) Încălzirea oțelului la o temperatură peste A1, urmată de răcire lentă în cuptor", "b) Călirea rapidă a oțelului", "c) Tratatament termic de suprafață"],
+                    correctAnswers: ["a) Încălzirea oțelului la o temperatură peste A1, urmată de răcire lentă în cuptor"],
+                    type: "radio"
+                },
+                {
+                    question: "86. Ce scop are 'normalizarea' în tratamentele termice de recondiționare?",
+                    options: ["a) Obținerea unei structuri granulare fine și uniforme", "b) Mărirea durității", "c) Reducerea rezistenței la tracțiune"],
+                    correctAnswers: ["a) Obținerea unei structuri granulare fine și uniforme"],
+                    type: "radio"
+                },
+                {
+                    question: "87. Ce este 'călirea' în tratamentele termice de recondiționare?",
+                    options: ["a) Încălzirea la o temperatură ridicată urmată de răcire lentă", "b) Încălzirea oțelului peste A3 sau Acm, urmată de răcire rapidă pentru a obține o structură martensitică", "c) Încălzirea la o temperatură scăzută pentru eliminarea tensiunilor"],
+                    correctAnswers: ["b) Încălzirea oțelului peste A3 sau Acm, urmată de răcire rapidă pentru a obține o structură martensitică"],
+                    type: "radio"
+                },
+                {
+                    question: "88. Ce se urmărește prin 'tratamentul termic de detensionare'?",
+                    options: ["a) Mărirea durității", "b) Eliminarea tensiunilor interne fără modificări structurale semnificative", "c) Îmbunătățirea aspectului"],
+                    correctAnswers: ["b) Eliminarea tensiunilor interne fără modificări structurale semnificative"],
+                    type: "radio"
+                },
+                {
+                    question: "89. Ce este 'cementarea' ca tratament termochimic?",
+                    options: ["a) Difuzia cromului în suprafață", "b) Îmbogățirea stratului superficial cu carbon", "c) Difuzia azotului în suprafață"],
+                    correctAnswers: ["b) Îmbogățirea stratului superficial cu carbon"],
+                    type: "radio"
+                },
+                {
+                    question: "90. Ce este 'nitrurarea' ca tratament termochimic?",
+                    options: ["a) Îmbogățirea stratului superficial cu carbon", "b) Difuzia azotului în suprafață", "c) Difuzia siliciului în suprafață"],
+                    correctAnswers: ["b) Difuzia azotului în suprafață"],
+                    type: "radio"
+                }
+            ],
+            "Chestionar 6": [
+                {
+                    question: "91. Ce proprietăți conferă nitrurarea oțelului?",
+                    options: ["a) Scăderea durității", "b) Creșterea durității și rezistenței la uzură și coroziune", "c) Îmbunătățirea ductilității"],
+                    correctAnswers: ["b) Creșterea durității și rezistenței la uzură și coroziune"],
+                    type: "radio"
+                },
+                {
+                    question: "92. Ce este 'cromarea' ca tratament termochimic?",
+                    options: ["a) Difuzia carbonului în suprafață", "b) Difuzia cromului în stratul superficial", "c) Difuzia azotului în suprafață"],
+                    correctAnswers: ["b) Difuzia cromului în stratul superficial"],
+                    type: "radio"
+                },
+                {
+                    question: "93. Ce proprietăți conferă cromarea termochimică?",
+                    options: ["a) Scăderea rezistenței la coroziune", "b) Creșterea rezistenței la coroziune și la uzură la temperaturi ridicate", "c) Îmbunătățirea aspectului"],
+                    correctAnswers: ["b) Creșterea rezistenței la coroziune și la uzură la temperaturi ridicate"],
+                    type: "radio"
+                },
+                {
+                    question: "94. Ce este 'silicizarea' ca tratament termochimic?",
+                    options: ["a) Difuzia aluminiului", "b) Difuzia siliciului în stratul superficial", "c) Difuzia cuprului"],
+                    correctAnswers: ["b) Difuzia siliciului în stratul superficial"],
+                    type: "radio"
+                },
+                {
+                    question: "95. Ce proprietăți conferă silicizarea?",
+                    options: ["a) Creșterea rezistenței la coroziune în medii acide", "b) Reducerea durității", "c) Îmbunătățirea conductivității electrice"],
+                    correctAnswers: ["a) Creșterea rezistenței la coroziune în medii acide"],
+                    type: "radio"
+                },
+                {
+                    question: "96. Ce este 'sherardizarea'?",
+                    options: ["a) O metodă de cromare", "b) O metodă de zincare termochimică", "c) O metodă de nitrurare"],
+                    correctAnswers: ["b) O metodă de zincare termochimică"],
+                    type: "radio"
+                },
+                {
+                    question: "97. Ce proprietăți conferă sherardizarea?",
+                    options: ["a) Rezistență la uzură", "b) Rezistență la coroziune în medii agresive", "c) Aspect decorativ"],
+                    correctAnswers: ["b) Rezistență la coroziune în medii agresive"],
+                    type: "radio"
+                },
+                {
+                    question: "98. Ce reprezintă 'aliajele dure' utilizate în recondiționare?",
+                    options: ["a) Aliaje cu punct de topire scăzut", "b) Aliaje pe bază de fier", "c) Aliaje pe bază de elemente cu punct de topire ridicat și duritate mare (Co, Cr, W, Mo, V)"],
+                    correctAnswers: ["c) Aliaje pe bază de elemente cu punct de topire ridicat și duritate mare (Co, Cr, W, Mo, V)"],
+                    type: "radio"
+                },
+                {
+                    question: "99. Care este o metodă de aplicare a straturilor dure?",
+                    options: ["a) Prin degresare", "b) Prin sudare cu arc electric sau cu flacără", "c) Prin lustruire"],
+                    correctAnswers: ["b) Prin sudare cu arc electric sau cu flacără"],
+                    type: "radio"
+                },
+                {
+                    question: "100. Ce se înțelege prin 'recondiționare prin lipire'?",
+                    options: ["a) Unirea a două piese cu ajutorul unui adeziv", "b) Asamblarea a două piese prin sudare", "c) Asamblarea a două piese prin lipire cu materiale de adaos metalice cu punct de topire inferior materialelor de bază"],
+                    correctAnswers: ["c) Asamblarea a două piese prin lipire cu materiale de adaos metalice cu punct de topire inferior materialelor de bază"],
+                    type: "radio"
+                },
+                {
+                    question: "101. Ce tipuri de lipire există?",
+                    options: ["a) Numai lipire moale", "b) Lipire moale și lipire tare", "c) Numai lipire tare"],
+                    correctAnswers: ["b) Lipire moale și lipire tare"],
+                    type: "radio"
+                },
+                {
+                    question: "102. Ce temperaturi implică lipirea moale?",
+                    options: ["a) Peste 450°C", "b) Sub 450°C", "c) Peste 1000°C"],
+                    correctAnswers: ["b) Sub 450°C"],
+                    type: "radio"
+                },
+                {
+                    question: "103. Ce materiale de adaos se utilizează la lipirea moale?",
+                    options: ["a) Aliaje de cupru", "b) Aliaje de staniu-plumb", "c) Aliaje de argint"],
+                    correctAnswers: ["b) Aliaje de staniu-plumb"],
+                    type: "radio"
+                },
+                {
+                    question: "104. Ce temperaturi implică lipirea tare?",
+                    options: ["a) Sub 450°C", "b) Peste 450°C", "c) Temperaturi ambiante"],
+                    correctAnswers: ["b) Peste 450°C"],
+                    type: "radio"
+                },
+                {
+                    question: "105. Ce materiale de adaos se utilizează la lipirea tare?",
+                    options: ["a) Aliaje de staniu-plumb", "b) Aliaje de cupru-zinc, cupru-argint, nichel", "c) Adezivi"],
+                    correctAnswers: ["b) Aliaje de cupru-zinc, cupru-argint, nichel"],
+                    type: "radio"
+                },
+                {
+                    question: "106. Care este un avantaj al lipirii ca metodă de recondiționare?",
+                    options: ["a) Rezistență mecanică superioară sudurii", "b) Nu afectează proprietățile mecanice ale materialelor de bază", "c) Necesită temperaturi foarte înalte"],
+                    correctAnswers: ["b) Nu afectează proprietățile mecanice ale materialelor de bază"],
+                    type: "radio"
+                },
+                {
+                    question: "107. Ce rol au fluxurile la lipire?",
+                    options: ["a) Măresc punctul de topire al materialului de adaos", "b) Îndepărtează oxizii și previn oxidarea", "c) Îmbunătățesc aspectul estetic"],
+                    correctAnswers: ["b) Îndepărtează oxizii și previn oxidarea"],
+                    type: "radio"
+                },
+                {
+                    question: "108. Ce se înțelege prin 'recondiționarea prin presare la rece'?",
+                    options: ["a) Reconstituirea dimensiunilor prin deformare plastică la rece", "b) Îmbinarea pieselor prin încălzire", "c) Acoperirea suprafeței cu un strat"],
+                    correctAnswers: ["a) Reconstituirea dimensiunilor prin deformare plastică la rece"],
+                    type: "radio"
+                }
+            ],
+            "Chestionar 7": [
+                {
+                    question: "109. Pentru ce tip de piese se utilizează recondiționarea prin presare la rece?",
+                    options: ["a) Arbori și fusuri", "b) Bucșe și lagăre", "c) Piese cu pereți subțiri sau deformări minore"],
+                    correctAnswers: ["c) Piese cu pereți subțiri sau deformări minore"],
+                    type: "radio"
+                },
+                {
+                    question: "110. Ce este 'presarea la cald'?",
+                    options: ["a) Reconstituirea dimensiunilor prin deformare plastică la rece", "b) Reconstituirea dimensiunilor prin deformare plastică la cald", "c) Umplerea cu material la cald"],
+                    correctAnswers: ["b) Reconstituirea dimensiunilor prin deformare plastică la cald"],
+                    type: "radio"
+                },
+                {
+                    question: "111. Ce este 'reconditionarea prin deformare plastică'?",
+                    options: ["a) Acoperirea suprafeței", "b) Modificarea formei sau dimensiunilor piesei prin aplicarea de forțe", "c) Sudarea pieselor"],
+                    correctAnswers: ["b) Modificarea formei sau dimensiunilor piesei prin aplicarea de forțe"],
+                    type: "radio"
+                },
+                {
+                    question: "112. Care este un avantaj al recondiționării prin deformare plastică?",
+                    options: ["a) Grosime foarte mare a stratului", "b) Nu adaugă material, ci remodelează pe cel existent", "c) Se poate aplica la orice tip de material"],
+                    correctAnswers: ["b) Nu adaugă material, ci remodelează pe cel existent"],
+                    type: "radio"
+                },
+                {
+                    question: "113. Ce se înțelege prin 'recondiționarea prin ștanțare la rece'?",
+                    options: ["a) Extinderea unei suprafețe prin forță la rece", "b) Tăierea materialului", "c) Lipirea materialului"],
+                    correctAnswers: ["a) Extinderea unei suprafețe prin forță la rece"],
+                    type: "radio"
+                },
+                {
+                    question: "114. Pentru ce tip de piese se aplică ștanțarea la rece?",
+                    options: ["a) Arbori groși", "b) Bucșe, inele de etanșare, piese cu pereți subțiri", "c) Piese masive"],
+                    correctAnswers: ["b) Bucșe, inele de etanșare, piese cu pereți subțiri"],
+                    type: "radio"
+                },
+                {
+                    question: "115. Ce se înțelege prin 'recondiționarea prin strunjire'?",
+                    options: ["a) Umplerea materialului", "b) Prelucrarea piesei pe strung pentru a restabili dimensiunile și forma", "c) Tăierea cu laser"],
+                    correctAnswers: ["b) Prelucrarea piesei pe strung pentru a restabili dimensiunile și forma"],
+                    type: "radio"
+                },
+                {
+                    question: "116. Ce este 'recondiționarea prin rectificare'?",
+                    options: ["a) O operație de sudare", "b) Prelucrarea abrazivă pentru a obține o precizie dimensională și o finisare superioară", "c) O operație de tăiere"],
+                    correctAnswers: ["b) Prelucrarea abrazivă pentru a obține o precizie dimensională și o finisare superioară"],
+                    type: "radio"
+                },
+                {
+                    question: "117. Care este principalul scop al recondiționării prin frezare?",
+                    options: ["a) Reconstituirea suprafețelor plane sau profilate", "b) Găurirea pieselor", "c) Lustruirea suprafețelor"],
+                    correctAnswers: ["a) Reconstituirea suprafețelor plane sau profilate"],
+                    type: "radio"
+                },
+                {
+                    question: "118. Ce se înțelege prin 'recondiționarea prin honuire'?",
+                    options: ["a) O prelucrare de degroșare", "b) O prelucrare finală a suprafețelor cilindrice interne (ex: cilindri de motor) pentru a obține precizie și finisare", "c) O operație de sudare"],
+                    correctAnswers: ["b) O prelucrare finală a suprafețelor cilindrice interne (ex: cilindri de motor) pentru a obține precizie și finisare"],
+                    type: "radio"
+                },
+                {
+                    question: "119. Ce este 'recondiționarea prin lepuire'?",
+                    options: ["a) O operație de șlefuire grosieră", "b) O operație de finisare abrazivă pentru a obține o precizie dimensională și o planeitate extremă", "c) O operație de vopsire"],
+                    correctAnswers: ["b) O operație de finisare abrazivă pentru a obține o precizie dimensională și o planeitate extremă"],
+                    type: "radio"
+                },
+                {
+                    question: "120. Ce este 'recondiționarea prin electroeroziune'?",
+                    options: ["a) Îndepărtarea materialului prin sudare", "b) Îndepărtarea materialului cu ajutorul descărcărilor electrice", "c) Îndepărtarea materialului prin frecare mecanică"],
+                    correctAnswers: ["b) Îndepărtarea materialului cu ajutorul descărcărilor electrice"],
+                    type: "radio"
+                },
+                {
+                    question: "121. Care este un avantaj al electroeroziunii?",
+                    options: ["a) Viteză mare de prelucrare", "b) Posibilitatea prelucrării materialelor foarte dure, indiferent de duritatea lor", "c) Costuri foarte scăzute"],
+                    correctAnswers: ["b) Posibilitatea prelucrării materialelor foarte dure, indiferent de duritatea lor"],
+                    type: "radio"
+                },
+                {
+                    question: "122. Ce este 'recondiționarea prin electrochimie'?",
+                    options: ["a) Adăugarea de material prin reacții chimice", "b) Îndepărtarea materialului prin procese electrochimice", "c) Doar curățarea suprafețelor"],
+                    correctAnswers: ["b) Îndepărtarea materialului prin procese electrochimice"],
+                    type: "radio"
+                },
+                {
+                    question: "123. Care este un avantaj al prelucrării electrochimice?",
+                    options: ["a) Durată mare de prelucrare", "b) Nu apar tensiuni termice sau mecanice în piesă", "c) Precizie redusă"],
+                    correctAnswers: ["b) Nu apar tensiuni termice sau mecanice în piesă"],
+                    type: "radio"
+                },
+                {
+                    question: "124. Ce se înțelege prin 'recondiționarea prin laser'?",
+                    options: ["a) Doar tăierea materialelor", "b) Utilizarea unui fascicul laser pentru diverse operații (sudare, călire, depuneri, etc.)", "c) Lustruirea suprafețelor"],
+                    correctAnswers: ["b) Utilizarea unui fascicul laser pentru diverse operații (sudare, călire, depuneri, etc.)"],
+                    type: "radio"
+                },
+                {
+                    question: "125. Care este un avantaj al utilizării laserului în recondiționare?",
+                    options: ["a) Afectare termică extinsă", "b) Precizie ridicată și zonă afectată termic redusă", "c) Echipament simplu și ieftin"],
+                    correctAnswers: ["b) Precizie ridicată și zonă afectată termic redusă"],
+                    type: "radio"
+                },
+                {
+                    question: "126. Ce se înțelege prin 'recondiționarea prin ultrasonic'?",
+                    options: ["a) Sudarea cu ultrasunete", "b) Curățarea suprafețelor cu unde ultrasonice", "c) Prelucrarea materialelor dure și fragile cu ajutorul vibrațiilor ultrasonice și a unei suspensii abrazive"],
+                    correctAnswers: ["c) Prelucrarea materialelor dure și fragile cu ajutorul vibrațiilor ultrasonice și a unei suspensii abrazive"],
+                    type: "radio"
+                }
+            ],
+            "Chestionar 8": [
+                {
+                    question: "127. Ce este 'recondiționarea prin vibrații ultrasonice'?",
+                    options: ["a) Îmbunătățirea aspectului", "b) Un proces de curățare a pieselor", "c) Eliminarea defectelor interne prin vibrații"],
+                    correctAnswers: ["b) Un proces de curățare a pieselor"],
+                    type: "radio"
+                },
+                {
+                    question: "128. Care este principalul scop al recondiționării prin vibrații ultrasonice?",
+                    options: ["a) Adăugarea de material", "b) Îndepărtarea impurităților, grăsimilor, oxizilor de pe suprafață", "c) Modificarea durității"],
+                    correctAnswers: ["b) Îndepărtarea impurităților, grăsimilor, oxizilor de pe suprafață"],
+                    type: "radio"
+                },
+                {
+                    question: "129. Ce este 'recondiționarea prin prelucrări cu jet de apă'?",
+                    options: ["a) Sudarea cu apă", "b) Tăierea sau curățarea materialelor cu un jet de apă de înaltă presiune", "c) Răcirea pieselor"],
+                    correctAnswers: ["b) Tăierea sau curățarea materialelor cu un jet de apă de înaltă presiune"],
+                    type: "radio"
+                },
+                {
+                    question: "130. Care este un avantaj al prelucrării cu jet de apă?",
+                    options: ["a) Afectare termică ridicată", "b) Nu produce praf sau căldură", "c) Doar pentru materiale moi"],
+                    correctAnswers: ["b) Nu produce praf sau căldură"],
+                    type: "radio"
+                },
+                {
+                    question: "131. Ce este 'recondiționarea prin polizare'?",
+                    options: ["a) O operație de degroșare", "b) O operație de finisare a suprafeței pentru a obține luciu și netezime", "c) O operație de tăiere"],
+                    correctAnswers: ["b) O operație de finisare a suprafeței pentru a obține luciu și netezime"],
+                    type: "radio"
+                },
+                {
+                    question: "132. Ce se înțelege prin 'recondiționarea prin slefuire'?",
+                    options: ["a) O operație de lipire", "b) O operație de prelucrare abrazivă pentru a îndepărta material și a îmbunătăți finisarea", "c) O operație de vopsire"],
+                    correctAnswers: ["b) O operație de prelucrare abrazivă pentru a îndepărta material și a îmbunătăți finisarea"],
+                    type: "radio"
+                },
+                {
+                    question: "133. Ce se înțelege prin 'recondiționarea prin periere'?",
+                    options: ["a) Curățarea suprafeței cu perii", "b) Eliminarea bavurilor și lustruirea suprafețelor cu perii rotative", "c) Adăugarea de material pe suprafață"],
+                    correctAnswers: ["b) Eliminarea bavurilor și lustruirea suprafețelor cu perii rotative"],
+                    type: "radio"
+                },
+                {
+                    question: "134. Ce este 'recondiționarea prin roluire'?",
+                    options: ["a) O metodă de tăiere", "b) O metodă de deformare plastică a suprafeței pentru a îmbunătăți finisarea și rezistența la oboseală", "c) O metodă de sudare"],
+                    correctAnswers: ["b) O metodă de deformare plastică a suprafeței pentru a îmbunătăți finisarea și rezistența la oboseală"],
+                    type: "radio"
+                },
+                {
+                    question: "135. Care este un avantaj al roluirii?",
+                    options: ["a) Reduce rezistența la oboseală", "b) Nu necesită lubrifiere", "c) Creșterea durității superficiale și a rezistenței la oboseală"],
+                    correctAnswers: ["c) Creșterea durității superficiale și a rezistenței la oboseală"],
+                    type: "radio"
+                },
+                {
+                    question: "136. Ce este 'recondiționarea prin sablare'?",
+                    options: ["a) O operație de sudare", "b) Curățarea sau pregătirea suprafeței prin proiectarea unui jet de particule abrazive", "c) O operație de vopsire"],
+                    correctAnswers: ["b) Curățarea sau pregătirea suprafeței prin proiectarea unui jet de particule abrazive"],
+                    type: "radio"
+                },
+                {
+                    question: "137. Ce este 'recondiționarea prin împănare'?",
+                    options: ["a) Sudarea a două piese", "b) Introducerea unei pane (cui conic) într-o gaură conică pentru a restabili ajustajul", "c) Lipirea pieselor"],
+                    correctAnswers: ["b) Introducerea unei pane (cui conic) într-o gaură conică pentru a restabili ajustajul"],
+                    type: "radio"
+                },
+                {
+                    question: "138. Pentru ce tip de ajustaje se utilizează împănarea?",
+                    options: ["a) Ajustaje cu joc mare", "b) Ajustaje strânse sau conice", "c) Ajustaje cu joc redus"],
+                    correctAnswers: ["b) Ajustaje strânse sau conice"],
+                    type: "radio"
+                },
+                {
+                    question: "139. Ce este 'recondiționarea prin broșare'?",
+                    options: ["a) O metodă de adăugare de material", "b) O metodă de prelucrare a găurilor sau a suprafețelor interne cu scule specializate (broșe)", "c) O metodă de polizare"],
+                    correctAnswers: ["b) O metodă de prelucrare a găurilor sau a suprafețelor interne cu scule specializate (broșe)"],
+                    type: "radio"
+                },
+                {
+                    question: "140. Ce se înțelege prin 'recondiționarea prin lăcuire/vopsire'?",
+                    options: ["a) Adăugarea de material pentru a restabili dimensiuni", "b) Aplicarea unui strat protector și decorativ pe suprafață", "c) Curățarea suprafeței"],
+                    correctAnswers: ["b) Aplicarea unui strat protector și decorativ pe suprafață"],
+                    type: "radio"
+                },
+                {
+                    question: "141. Care este principalul scop al lăcuirii/vopsirii în recondiționare?",
+                    options: ["a) Creșterea durității", "b) Protecție anticorozivă și îmbunătățirea aspectului estetic", "c) Conducerea electrică"],
+                    correctAnswers: ["b) Protecție anticorozivă și îmbunătățirea aspectului estetic"],
+                    type: "radio"
+                },
+                {
+                    question: "142. Ce se înțelege prin 'recondiționarea prin vulcanizare'?",
+                    options: ["a) Repararea pieselor metalice", "b) Repararea și restabilirea proprietăților materialelor elastice (cauciuc) prin procese termice și chimice", "c) Lipirea materialelor plastice"],
+                    correctAnswers: ["b) Repararea și restabilirea proprietăților materialelor elastice (cauciuc) prin procese termice și chimice"],
+                    type: "radio"
+                },
+                {
+                    question: "143. Pentru ce tip de piese se utilizează vulcanizarea?",
+                    options: ["a) Piese metalice", "b) Anvelope, garnituri, curele de transmisie", "c) Piese ceramice"],
+                    correctAnswers: ["b) Anvelope, garnituri, curele de transmisie"],
+                    type: "radio"
+                },
+                {
+                    question: "144. Ce este 'recondiționarea prin impregnare'?",
+                    options: ["a) Acoperirea suprafeței cu vopsea", "b) Umplerea porilor sau fisurilor cu substanțe lichide sau vâscoase care se solidifică", "c) Sudarea pieselor poroase"],
+                    correctAnswers: ["b) Umplerea porilor sau fisurilor cu substanțe lichide sau vâscoase care se solidifică"],
+                    type: "radio"
+                }
+            ],
+            "Chestionar 9": [
+                {
+                    question: "145. Ce tip de materiale sunt adesea recondiționate prin impregnare?",
+                    options: ["a) Piese metalice masive", "b) Piese poroase din fontă, bronz, ceramică sau materiale compozite", "c) Piese din sticlă"],
+                    correctAnswers: ["b) Piese poroase din fontă, bronz, ceramică sau materiale compozite"],
+                    type: "radio"
+                },
+                {
+                    question: "146. Care este un avantaj al impregnării?",
+                    options: ["a) Mărește porozitatea", "b) Îmbunătățește etanșeitatea, rezistența mecanică și rezistența la coroziune a pieselor poroase", "c) Reduce duritatea"],
+                    correctAnswers: ["b) Îmbunătățește etanșeitatea, rezistența mecanică și rezistența la coroziune a pieselor poroase"],
+                    type: "radio"
+                },
+                {
+                    question: "147. Ce este 'recondiționarea prin sudare'?",
+                    options: ["a) Îmbinarea mecanică a pieselor", "b) Îmbinarea permanentă a materialelor prin topire locală și solidificare, cu sau fără material de adaos", "c) Lipirea pieselor la rece"],
+                    correctAnswers: ["b) Îmbinarea permanentă a materialelor prin topire locală și solidificare, cu sau fără material de adaos"],
+                    type: "radio"
+                },
+                {
+                    question: "148. Care este principalul scop al sudării în recondiționare?",
+                    options: ["a) Numai pentru îmbunătățirea aspectului", "b) Reconstituirea formei și dimensiunilor pieselor uzate sau deteriorate", "c) Doar pentru tăierea materialelor"],
+                    correctAnswers: ["b) Reconstituirea formei și dimensiunilor pieselor uzate sau deteriorate"],
+                    type: "radio"
+                },
+                {
+                    question: "149. Ce este 'sudarea cu arc electric'?",
+                    options: ["a) Sudare cu flacără", "b) Sudare prin utilizarea unui arc electric între electrod și piesă pentru a topi materialul", "c) Sudare prin presiune"],
+                    correctAnswers: ["b) Sudare prin utilizarea unui arc electric între electrod și piesă pentru a topi materialul"],
+                    type: "radio"
+                },
+                {
+                    question: "150. Ce este 'sudarea cu flacără (autogena)'?",
+                    options: ["a) Sudare cu laser", "b) Sudare prin utilizarea unei flăcări obținute prin arderea unui gaz combustibil cu oxigen", "c) Sudare cu arc electric"],
+                    correctAnswers: ["b) Sudare prin utilizarea unei flăcări obținute prin arderea unui gaz combustibil cu oxigen"],
+                    type: "radio"
+                },
+                {
+                    question: "151. Ce este 'sudarea cu gaz inert (TIG/MIG)'?",
+                    options: ["a) Sudare fără protecție gazoasă", "b) Sudare cu protecție de gaz inert pentru a preveni oxidarea", "c) Sudare prin presiune"],
+                    correctAnswers: ["b) Sudare cu protecție de gaz inert pentru a preveni oxidarea"],
+                    type: "radio"
+                },
+                {
+                    question: "152. Ce este 'sudarea prin puncte'?",
+                    options: ["a) Sudare pe o linie continuă", "b) Sudare prin crearea de puncte de sudură prin rezistență electrică, frecvent utilizată pentru table subțiri", "c) Sudare cu laser"],
+                    correctAnswers: ["b) Sudare prin crearea de puncte de sudură prin rezistență electrică, frecvent utilizată pentru table subțiri"],
+                    type: "radio"
+                },
+                {
+                    question: "153. Care este un avantaj al sudării în recondiționare?",
+                    options: ["a) Afectare termică extinsă", "b) Obținerea unei rezistențe mecanice ridicate a zonei recondiționate", "c) Costuri foarte mari"],
+                    correctAnswers: ["b) Obținerea unei rezistențe mecanice ridicate a zonei recondiționate"],
+                    type: "radio"
+                },
+                {
+                    question: "154. Ce este 'recondiționarea prin șlefuire abrazivă'?",
+                    options: ["a) O operație de sudare", "b) O operație de prelucrare pentru a îndepărta material prin abraziune și a obține o finisare specifică", "c) O operație de vopsire"],
+                    correctAnswers: ["b) O operație de prelucrare pentru a îndepărta material prin abraziune și a obține o finisare specifică"],
+                    type: "radio"
+                },
+                {
+                    question: "155. Ce este 'recondiționarea prin metalizare cu pulberi'?",
+                    options: ["a) Aplicarea unui strat metalic prin sudare", "b) Aplicarea unui strat de pulbere metalică prin topire și aderare pe suprafață", "c) Curățarea suprafeței cu pulberi"],
+                    correctAnswers: ["b) Aplicarea unui strat de pulbere metalică prin topire și aderare pe suprafață"],
+                    type: "radio"
+                },
+                {
+                    question: "156. Ce este 'recondiționarea prin polimerizare'?",
+                    options: ["a) Repararea pieselor metalice", "b) Repararea pieselor folosind materiale polimerice care se solidifică (rășini, adezivi) pentru a umple fisuri sau a reface dimensiuni", "c) Tratament termic al metalelor"],
+                    correctAnswers: ["b) Repararea pieselor folosind materiale polimerice care se solidifică (rășini, adezivi) pentru a umple fisuri sau a reface dimensiuni"],
+                    type: "radio"
+                },
+                {
+                    question: "157. Pentru ce tip de aplicații se utilizează polimerizarea în recondiționare?",
+                    options: ["a) Piese supuse la sarcini mecanice mari", "b) Repararea fisurilor, umplerea golurilor, refacerea suprafețelor uzate la piese puțin solicitate", "c) Piese care necesită rezistență la temperaturi înalte"],
+                    correctAnswers: ["b) Repararea fisurilor, umplerea golurilor, refacerea suprafețelor uzate la piese puțin solicitate"],
+                    type: "radio"
+                },
+                {
+                    question: "158. Ce este 'recondiționarea prin galvanoplastie'?",
+                    options: ["a) O metodă de lipire", "b) O metodă de depunere electrolitică a unui strat gros de metal pentru a reface dimensiunile pieselor uzate", "c) O metodă de vopsire"],
+                    correctAnswers: ["b) O metodă de depunere electrolitică a unui strat gros de metal pentru a reface dimensiunile pieselor uzate"],
+                    type: "radio"
+                },
+                {
+                    question: "159. Care este un avantaj al galvanoplastiei?",
+                    options: ["a) Nu necesită pregătire a suprafeței", "b) Permite obținerea de straturi de grosime mare cu aderență bună", "c) Proces rapid"],
+                    correctAnswers: ["b) Permite obținerea de straturi de grosime mare cu aderență bună"],
+                    type: "radio"
+                },
+                {
+                    question: "160. Ce este 'recondiționarea prin placare'?",
+                    options: ["a) Sudarea a două piese", "b) Acoperirea unei suprafețe cu un strat de metal printr-o îmbinare metalurgică (laminare la cald, sudare prin explozie)", "c) Vopsirea suprafeței"],
+                    correctAnswers: ["b) Acoperirea unei suprafețe cu un strat de metal printr-o îmbinare metalurgică (laminare la cald, sudare prin explozie)"],
+                    type: "radio"
+                },
+                {
+                    question: "161. Ce este 'recondiționarea prin metalizare sub vid'?",
+                    options: ["a) Pulverizare termică în aer", "b) Depunerea unui strat metalic sub condiții de vid avansat pentru a obține straturi pure și dense", "c) Galvanizare"],
+                    correctAnswers: ["b) Depunerea unui strat metalic sub condiții de vid avansat pentru a obține straturi pure și dense"],
+                    type: "radio"
+                },
+                {
+                    question: "162. Care este un avantaj al metalizării sub vid?",
+                    options: ["a) Costuri reduse", "b) Obținerea de straturi cu puritate ridicată și aderență excelentă", "c) Proces rapid și simplu"],
+                    correctAnswers: ["b) Obținerea de straturi cu puritate ridicată și aderență excelentă"],
+                    type: "radio"
+                }
+            ]
+            // Dacă mai există întrebări în PDF, le poți adăuga ca "Chestionar 10", "Chestionar 11", etc.
+            // Fiecare set nou trebuie să înceapă de la următoarea întrebare din PDF și să aibă 18 întrebări.
+        };
+
+        let currentQuizName = '';
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; // To store user's selected answers for the current quiz
+
+        const quizSelectionDiv = document.getElementById('quizSelection');
+        const quizButtonsDiv = document.getElementById('quizButtons');
+        const quizDisplayDiv = document.getElementById('quizDisplay');
+        const questionSection = document.getElementById('questionSection');
+        const questionNumberElem = document.getElementById('questionNumber');
+        const questionTextElem = document.getElementById('questionText');
+        const optionsContainerElem = document.getElementById('optionsContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsContent = document.getElementById('resultsContent');
+        const backToSelectionBtn = document.getElementById('backToSelection');
+
+        function generateQuizSelectionButtons() {
+            quizButtonsDiv.innerHTML = '';
+            for (const quizName in allQuizzes) {
+                const button = document.createElement('button');
+                button.textContent = quizName;
+                button.addEventListener('click', () => startQuiz(quizName));
+                quizButtonsDiv.appendChild(button);
+            }
+        }
+
+        function startQuiz(quizName) {
+            currentQuizName = quizName;
+            currentQuestions = allQuizzes[quizName];
+            currentQuestionIndex = 0;
+            userAnswers = {}; // Reset answers for the new quiz
+
+            quizSelectionDiv.style.display = 'none';
+            quizDisplayDiv.style.display = 'block';
+            questionSection.style.display = 'block';
+            resultsSection.style.display = 'none';
+            backToSelectionBtn.style.display = 'none'; // Hide this until results are shown
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            questionNumberElem.textContent = `Întrebarea ${currentQuestionIndex + 1}/${currentQuestions.length}`;
+            questionTextElem.textContent = question.question;
+            optionsContainerElem.innerHTML = ''; // Clear previous options
+
+            question.options.forEach((option, index) => {
+                const inputId = `option-${currentQuizName}-${currentQuestionIndex}-${index}`;
+                const label = document.createElement('label');
+                label.htmlFor = inputId;
+
+                const input = document.createElement('input');
+                input.type = question.type;
+                input.name = `question-${currentQuizName}-${currentQuestionIndex}`; // Unique name for each question across quizzes
+                input.value = option;
+                input.id = inputId;
+
+                // Pre-select user's previous answer if available
+                if (userAnswers[currentQuestionIndex]) {
+                    if (question.type === 'radio' && userAnswers[currentQuestionIndex] === option) {
+                        input.checked = true;
+                    } else if (question.type === 'checkbox' && Array.isArray(userAnswers[currentQuestionIndex]) && userAnswers[currentQuestionIndex].includes(option)) {
+                        input.checked = true;
+                    }
+                }
+
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(option));
+                optionsContainerElem.appendChild(label);
+            });
+
+            updateNavigationButtons();
+        }
+
+        function saveAnswer() {
+            const currentQuestion = currentQuestions[currentQuestionIndex];
+            if (currentQuestion.type === 'radio') {
+                const selectedOption = document.querySelector(`input[name="question-${currentQuizName}-${currentQuestionIndex}"]:checked`);
+                userAnswers[currentQuestionIndex] = selectedOption ? selectedOption.value : null;
+            } else if (currentQuestion.type === 'checkbox') {
+                const selectedOptions = Array.from(document.querySelectorAll(`input[name="question-${currentQuizName}-${currentQuestionIndex}"]:checked`)).map(input => input.value);
+                userAnswers[currentQuestionIndex] = selectedOptions;
+            }
+        }
+
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.style.display = currentQuestionIndex === currentQuestions.length - 1 ? 'none' : 'inline-block';
+            submitBtn.style.display = currentQuestionIndex === currentQuestions.length - 1 ? 'inline-block' : 'none';
+        }
+
+        function showResults() {
+            resultsContent.innerHTML = ''; // Clear previous results
+            let correctCount = 0;
+
+            currentQuestions.forEach((question, index) => {
+                const userSelection = userAnswers[index];
+                const isCorrect = checkAnswer(question, userSelection);
+
+                const resultItem = document.createElement('div');
+                resultItem.classList.add('result-item');
+                resultItem.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+                const questionP = document.createElement('p');
+                questionP.innerHTML = `<strong>Întrebarea ${index + 1}:</strong> ${question.question}`;
+                resultItem.appendChild(questionP);
+
+                const userAnswerP = document.createElement('p');
+                if (question.type === 'radio') {
+                    userAnswerP.innerHTML = `Răspunsul tău: <span class="user-answer">${userSelection || 'Niciun răspuns'}</span>`;
+                } else if (question.type === 'checkbox') {
+                    userAnswerP.innerHTML = `Răspunsurile tale: <span class="user-answer">${userSelection && userSelection.length > 0 ? userSelection.join(', ') : 'Niciun răspuns'}</span>`;
+                }
+                resultItem.appendChild(userAnswerP);
+
+                const correctAnswerP = document.createElement('p');
+                correctAnswerP.innerHTML = `Răspuns corect: <span class="correct-answer">${question.correctAnswers.join(', ')}</span>`;
+                resultItem.appendChild(correctAnswerP);
+
+                resultsContent.appendChild(resultItem);
+
+                if (isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            const scoreP = document.createElement('p');
+            scoreP.innerHTML = `<strong>Scor final: ${correctCount} din ${currentQuestions.length} întrebări corecte.</strong>`;
+            resultsContent.prepend(scoreP); // Add score at the top
+
+            resultsSection.style.display = 'block'; // Show results section
+            questionSection.style.display = 'none'; // Hide quiz questions
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'none';
+            backToSelectionBtn.style.display = 'inline-block';
+        }
+
+        function checkAnswer(question, userSelection) {
+            if (question.type === 'radio') {
+                return question.correctAnswers.includes(userSelection);
+            } else if (question.type === 'checkbox') {
+                // For checkboxes, user's selected answers must exactly match correct answers
+                if (!userSelection || userSelection.length !== question.correctAnswers.length) {
+                    return false;
+                }
+                // Sort both arrays to ensure order doesn't matter for comparison
+                const sortedUserSelection = [...userSelection].sort();
+                const sortedCorrectAnswers = [...question.correctAnswers].sort();
+                return sortedCorrectAnswers.every((answer, index) => answer === sortedUserSelection[index]);
+            }
+            return false;
+        }
+
+        // Event Listeners for navigation buttons
+        prevBtn.addEventListener('click', () => {
+            saveAnswer();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            saveAnswer();
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            }
+        });
+
+        submitBtn.addEventListener('click', () => {
+            saveAnswer(); // Save answer for the last question
+            showResults();
+        });
+
+        backToSelectionBtn.addEventListener('click', () => {
+            quizSelectionDiv.style.display = 'block';
+            quizDisplayDiv.style.display = 'none';
+            resultsSection.style.display = 'none';
+            // No need to regenerate buttons if they are static from allQuizzes
+        });
+
+        // Initial setup: generate quiz selection buttons when the page loads
+        document.addEventListener('DOMContentLoaded', generateQuizSelectionButtons);
+    </script>
+</body>
+</html>
